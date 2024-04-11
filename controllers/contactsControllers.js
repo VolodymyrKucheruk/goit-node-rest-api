@@ -1,10 +1,5 @@
 import * as contactsServices from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
-import validateBody from "../helpers/validateBody.js";
-import {
-  createContactSchema,
-  updateContactSchema,
-} from "../schemas/contactsSchemas.js";
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -50,8 +45,7 @@ export const createContact = async (req, res) => {
   }
 };
 
-export const updateContact = async (req, res, next) => {
-
+export const updateContact = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -64,7 +58,21 @@ export const updateContact = async (req, res, next) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    next(error);
+    handleError(error, res);
+  }
+};
+
+export const updateContactFavorite = async (req, res) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+  try {
+    const updatedContact = await updateStatusContact(contactId, { favorite });
+    if (!updatedContact) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    res.status(200).json(updatedContact);
+  } catch (error) {
+    handleError(error, res);
   }
 };
 
