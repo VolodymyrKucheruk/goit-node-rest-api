@@ -63,10 +63,13 @@ export const updateContact = async (req, res) => {
 };
 
 export const updateContactFavorite = async (req, res) => {
-  const { contactId } = req.params;
+  const { id } = req.params;
   const { favorite } = req.body;
   try {
-    const updatedContact = await updateStatusContact(contactId, { favorite });
+    const updatedContact = await contactsServices.updateStatusContact(
+      id,
+      { favorite }
+    );
     if (!updatedContact) {
       return res.status(404).json({ message: "Not found" });
     }

@@ -26,10 +26,10 @@ export async function updateContact(id, body) {
   });
   return updatedContact;
 }
-export async function updateStatusContact(contactId, body) {
+export async function updateStatusContact(id, body) {
   const { favorite } = body;
   const updatedContact = await Contact.findByIdAndUpdate(
-    contactId,
+    id,
     { favorite },
     { new: true }
   );
