@@ -5,13 +5,13 @@ export async function listContacts() {
   return data;
 }
 
-export async function getContactById(contactId) {
-  const foundContact = Contact.findById(contactId);
+export async function getContactById(id) {
+  const foundContact = Contact.findById(id);
   return foundContact || null;
 }
 
-export async function removeContact(contactId) {
-  const removedContact = await Contact.findByIdAndDelete(contactId);
+export async function removeContact(id) {
+  const removedContact = await Contact.findByIdAndDelete(id);
   return removedContact;
 }
 
