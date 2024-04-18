@@ -13,7 +13,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/auth", router);
+app.use("/api/users", router);
 app.use("/api/contacts", contactsRouter);
 
 app.use((_, res) => {
