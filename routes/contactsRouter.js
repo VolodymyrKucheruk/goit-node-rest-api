@@ -7,13 +7,13 @@ import {
   updateContact,
   updateContactFavorite,
 } from "../controllers/contactsControllers.js";
-
 import validateBody from "../helpers/validateBody.js";
 import {
   createContactSchema,
   updateContactSchema,
-} from "../schemas/contactsSchemas.js";
+} from "../models/contactsSchemas.js";
 import isValidId from "../helpers/isValidId.js";
+
 
 const contactsRouter = express.Router();
 

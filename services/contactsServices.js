@@ -1,17 +1,36 @@
 import { Contact } from "../models/contactModel.js";
 
 export async function listContacts() {
-  const data = await Contact.find();
+  const { _id: owner } = req.user;
+  const { favorite } = req.query;
+  const ownerFilter = { owner };
+  if (favorite !== undefined) {
+    ownerFilter.favorite = favorite === "true";
+  }
+  const { page = 1, limit = 25 } = req.query;
+  const skip = (page - 1) * limit;
+  const data = await Contact.find(ownerFilter)
+    .skip(skip)
+    .limit(limit)
+    .populate("owner", "email");
   return data;
 }
 
-export async function getContactById(contactId) {
-  const foundContact = Contact.findById(contactId);
+export async function getContactById(req, contactId) {
+  const { _id: owner } = req.user;
+  const foundContact = await Contact.findOne({ _id: contactId, owner });
   return foundContact || null;
 }
 
-export async function removeContact(contactId) {
-  const removedContact = await Contact.findByIdAndDelete(contactId);
+export async function removeContact(req, contactId) {
+  const { _id: owner } = req.user;
+  const removedContact = await Contact.findByIdAndDelete({
+    _id: contactId,
+    owner,
+  });
+  if (!removedContact) {
+    return null;
+  }
   return removedContact;
 }
 
@@ -20,16 +39,20 @@ export async function addContact(contact) {
   return newContact;
 }
 
-export async function updateContact(id, body) {
-  const updatedContact = await Contact.findByIdAndUpdate(id, body, {
-    new: true,
-  });
+export async function updateContact(req, id, body) {
+  const { _id: owner } = req.user;
+  const updatedContact = await Contact.findByIdAndUpdate(
+    { _id: id, owner },
+    body,
+    { new: true }
+  );
   return updatedContact;
 }
-export async function updateStatusContact(contactId, body) {
+export async function updateStatusContact(req, contactId, body) {
+  const { _id: owner } = req.user;
   const { favorite } = body;
   const updatedContact = await Contact.findByIdAndUpdate(
-    contactId,
+    { _id: contactId, owner },
     { favorite },
     { new: true }
   );
