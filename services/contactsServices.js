@@ -39,7 +39,7 @@ export async function addContact(contact) {
   return newContact;
 }
 
-export async function updateContact(req, id, body) {
+export async function updatesContact(req, id, body) {
   const { _id: owner } = req.user;
   const updatedContact = await Contact.findByIdAndUpdate(
     { _id: id, owner },
