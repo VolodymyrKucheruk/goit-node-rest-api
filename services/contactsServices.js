@@ -1,6 +1,6 @@
 import { Contact } from "../models/contactModel.js";
 
-export async function listContacts() {
+export async function listContacts(req) {
   const { _id: owner } = req.user;
   const { favorite } = req.query;
   const ownerFilter = { owner };

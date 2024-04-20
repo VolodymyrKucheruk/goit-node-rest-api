@@ -13,22 +13,25 @@ import {
   updateContactSchema,
 } from "../models/contactsSchemas.js";
 import isValidId from "../helpers/isValidId.js";
+import { authenticate } from "../helpers/authenticate.js";
 
 
 const contactsRouter = express.Router();
 
-contactsRouter.get("/", getAllContacts);
-contactsRouter.get("/:id", isValidId, getOneContact);
-contactsRouter.delete("/:id", isValidId, deleteContact);
-contactsRouter.post("/", validateBody(createContactSchema), createContact);
+contactsRouter.get("/", authenticate, getAllContacts);
+contactsRouter.get("/:id", authenticate, isValidId("id"), getOneContact);
+contactsRouter.delete("/:id",authenticate, isValidId("id"), deleteContact);
+contactsRouter.post("/",authenticate, validateBody(createContactSchema), createContact);
 contactsRouter.put(
   "/:id",
-  isValidId,
+  authenticate,
+  isValidId("id"),
   validateBody(updateContactSchema),
   updateContact
 );
 contactsRouter.patch(
   "/:contactId/favorite",
+  authenticate,
   isValidId,
   validateBody(updateContactSchema),
   updateContactFavorite

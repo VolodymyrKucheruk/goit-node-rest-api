@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import HttpError from "../helpers/HttpError.js";
+
 
 const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 

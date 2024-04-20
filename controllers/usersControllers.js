@@ -19,10 +19,8 @@ export const register = async (req, res, next) => {
     const newUser = await User.create({ ...req.body, password: hashPassword });
 
     res.status(201).json({
-      users: {
-        email: newUser.email,
-        subscription: newUser.subscription,
-      },
+      email: newUser.email,
+      subscription: newUser.subscription,
     });
   } catch (error) {
     next(error);
@@ -45,10 +43,8 @@ export const login = async (req, res, next) => {
 
     res.json({
       token,
-      users: {
-        email: user.email,
-        subscription: user.subscription,
-      },
+      email: user.email,
+      subscription: user.subscription,
     });
   } catch (error) {
     next(error);
