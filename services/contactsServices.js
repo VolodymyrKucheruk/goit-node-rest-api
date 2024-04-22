@@ -24,7 +24,7 @@ export async function getContactById(req, contactId) {
 
 export async function removeContact(req, contactId) {
   const { _id: owner } = req.user;
-  const removedContact = await Contact.findByIdAndDelete({
+  const removedContact = await Contact.findOneAndDelete({
     _id: contactId,
     owner,
   });
@@ -34,6 +34,7 @@ export async function removeContact(req, contactId) {
   return removedContact;
 }
 
+
 export async function addContact(contact) {
   const newContact = await Contact.create(contact);
   return newContact;
@@ -41,7 +42,7 @@ export async function addContact(contact) {
 
 export async function updatesContact(req, id, body) {
   const { _id: owner } = req.user;
-  const updatedContact = await Contact.findByIdAndUpdate(
+  const updatedContact = await Contact.findOneAndUpdate(
     { _id: id, owner },
     body,
     { new: true }
@@ -49,9 +50,9 @@ export async function updatesContact(req, id, body) {
   return updatedContact;
 }
 export async function updateStatusContact(req, contactId, body) {
-  const { _id: owner } = req.user;
   const { favorite } = body;
-  const updatedContact = await Contact.findByIdAndUpdate(
+  const { _id: owner } = req.user;
+  const updatedContact = await Contact.findOneAndUpdate(
     { _id: contactId, owner },
     { favorite },
     { new: true }

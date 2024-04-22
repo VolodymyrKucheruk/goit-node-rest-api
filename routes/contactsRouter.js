@@ -30,9 +30,9 @@ contactsRouter.put(
   updateContact
 );
 contactsRouter.patch(
-  "/:contactId/favorite",
+  "/:id/favorite",
   authenticate,
-  isValidId,
+  isValidId("id"),
   validateBody(updateContactSchema),
   updateContactFavorite
 );

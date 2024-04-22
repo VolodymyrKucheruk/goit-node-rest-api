@@ -40,9 +40,6 @@ export const deleteContact = async (req, res) => {
     if (!removedContact) {
       throw HttpError(404);
     }
-    if (removedContact.owner.toString() !== req.user._id.toString()) {
-      throw HttpError(403, "Access forbidden");
-    }
     res.status(200).json(removedContact);
   } catch (error) {
     handleError(error, res);
@@ -70,9 +67,6 @@ export const updateContact = async (req, res) => {
     if (!result) {
       throw HttpError(404);
     }
-    if (result.owner.toString() !== req.user._id.toString()) {
-      throw HttpError(403, "Access forbidden");
-    }
     const { favorite } = req.body;
     const updatedContact = await updateStatusContact(req, id, { favorite });
     res.status(200).json(updatedContact);
@@ -82,20 +76,19 @@ export const updateContact = async (req, res) => {
 };
 
 export const updateContactFavorite = async (req, res) => {
-  const { contactId } = req.params;
+  const { id } = req.params;
   const { favorite } = req.body;
   try {
-    const updatedContact = await updateStatusContact(req, contactId, {
+    const updatedContact = await updateStatusContact(req, id, {
       favorite,
     });
-    if (!updatedContact) {
-      return res.status(404).json({ message: "Not found" });
-    }
+    if (!updatedContact) throw HttpError(404, "Not found");
     res.status(200).json(updatedContact);
   } catch (error) {
     handleError(error, res);
   }
 };
+
 
 const handleError = (error, res) => {
   const status = error.status || 500;
