@@ -6,12 +6,14 @@ import {
   updateSubscriptionSchema,
 } from "../models/usersSchema.js";
 import { authenticate } from "../helpers/authenticate.js";
+import { upload } from "../helpers/upload.js";
 import {
   register,
   login,
   logout,
   current,
   updateSubscription,
+  updateAvatar,
 } from "../controllers/usersControllers.js";
 
 export const router = express.Router();
@@ -26,3 +28,4 @@ router.patch(
   validateBody(updateSubscriptionSchema),
   updateSubscription
 );
+router.patch("/avatars", authenticate, upload.single("avatar"), updateAvatar);
