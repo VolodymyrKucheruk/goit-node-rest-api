@@ -9,6 +9,12 @@ export const registerSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+export const emailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required().messages({
+    "string.pattern.base": "Email must be a valid email address",
+  }),
+});
+
 export const loginSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required().messages({
     "string.pattern.base": "Email must be a valid email address",

@@ -8,11 +8,12 @@ import { promises as fs } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import Jimp from "jimp";
-
+import { sendEmail } from "../helpers/sendEmail.js";
+import { v4 } from "uuid";
 
 dotenv.config();
 
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, MAILTRAP_USER, MAILTRAP_HOST } = process.env;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,15 +28,71 @@ export const register = async (req, res, next) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
     const avatarURL = gravatar.url(email);
+    const verificationToken = v4();
     const newUser = await User.create({
       ...req.body,
       password: hashPassword,
       avatarURL,
+      verificationToken,
     });
+    const verifyEmail = {
+      from: MAILTRAP_USER,
+      to: email,
+      subject: "Verify email",
+      html: `<a target="_blank" href="${MAILTRAP_HOST}/users/verify/${verificationToken}">Click verify email</a>`,
+    };
+    await sendEmail(verifyEmail);
 
     res.status(201).json({
       email: newUser.email,
       subscription: newUser.subscription,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyEmail = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await User.findOne({ verificationToken });
+    if (!user) {
+      throw HttpError(404, "Invalid or expired verification token");
+    }
+    if (user.verify) {
+      throw HttpError(409, "Email already verified");
+    }
+    await User.findByIdAndUpdate(user._id, {
+      verify: true,
+      verificationToken: null,
+    });
+
+    res.status(200).json({
+      message: "Email verification successful",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendVerifyEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw HttpError(400, "missing required field email");
+    }
+    if (user.verify) {
+      throw HttpError(400, "Verification has already been passed");
+    }
+    const verifyEmail = {
+      to: email,
+      subject: "Verify email",
+      html: `<a target="_blank" href="${MAILTRAP_HOST}/users/verify/${user.verificationToken}">Click verify email</a>`,
+    };
+    await sendEmail(verifyEmail);
+    res.json({
+      message: "Verify email send success",
     });
   } catch (error) {
     next(error);

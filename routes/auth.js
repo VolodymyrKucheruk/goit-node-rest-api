@@ -4,6 +4,7 @@ import {
   registerSchema,
   loginSchema,
   updateSubscriptionSchema,
+  emailSchema,
 } from "../models/usersSchema.js";
 import { authenticate } from "../helpers/authenticate.js";
 import { upload } from "../helpers/upload.js";
@@ -14,12 +15,16 @@ import {
   current,
   updateSubscription,
   updateAvatar,
+  verifyEmail,
+  resendVerifyEmail,
 } from "../controllers/usersControllers.js";
 
 export const router = express.Router();
 
 router.get("/current", authenticate, current);
 router.post("/register", validateBody(registerSchema), register);
+router.get("/verify/:verificationToken", verifyEmail);
+router.post("/verify", validateBody(emailSchema), resendVerifyEmail);
 router.post("/login", validateBody(loginSchema), login);
 router.post("/logout", authenticate, logout);
 router.patch(
